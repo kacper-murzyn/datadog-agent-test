@@ -1010,10 +1010,14 @@ def create_rc(ctx, major_versions="6,7", patch_version=False, upstream="origin")
     """
     if sys.version_info[0] < 3:
         return Exit(message="Must use Python 3 for this task", code=1)
+    
+    print("Step 1")
 
     github = GithubAPI(repository=GITHUB_REPO_NAME)
 
     list_major_versions = parse_major_versions(major_versions)
+
+    print("Step 2")
 
     # Get the version of the highest major: useful for some logging & to get
     # the version to use for Go submodules updates
@@ -1026,12 +1030,16 @@ def create_rc(ctx, major_versions="6,7", patch_version=False, upstream="origin")
     # Get a string representation of the RC, eg. "6/7.32.0-rc.1"
     versions_string = f"{'/'.join([str(n) for n in list_major_versions[:-1]] + [str(new_highest_version)])}"
 
+    print("Step 3")
+
     print(color_message(f"Preparing RC for agent version(s) {list_major_versions}", "bold"))
 
     # Step 0: checks
 
     print(color_message("Checking repository state", "bold"))
     ctx.run("git fetch")
+
+    print("Step 4")
 
     # Check that the current and update branches are valid
     current_branch = ctx.run("git rev-parse --abbrev-ref HEAD", hide=True).stdout.strip()

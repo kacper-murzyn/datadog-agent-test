@@ -18,8 +18,8 @@ from .color import color_message
 
 # constants
 DEFAULT_BRANCH = "main"
-GITHUB_ORG = "DataDog"
-REPO_NAME = "datadog-agent"
+GITHUB_ORG = "kacper-murzyn"
+REPO_NAME = "datadog-agent-test"
 GITHUB_REPO_NAME = f"{GITHUB_ORG}/{REPO_NAME}"
 REPO_PATH = f"github.com/{GITHUB_REPO_NAME}"
 ALLOWED_REPO_NON_NIGHTLY_BRANCHES = {"dev", "stable", "beta", "none"}
