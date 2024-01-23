@@ -10,6 +10,9 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v2
 
+            - name: Install pkg-config
+              run: apt-get install pkg-config
+
             - name: Install python
               uses: actions/setup-python@v4
               with:
