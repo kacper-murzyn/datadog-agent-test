@@ -23,7 +23,9 @@ jobs:
                 pip install -r tasks/libs/requirements-github.txt
 
             - name: Create RC PR
-              run: inv -e release.create-rc
+              run: |
+                export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+                inv -e release.create-rc
 
             - name: Notify Slack
               uses: rtCamp/action-slack-notify@v2
