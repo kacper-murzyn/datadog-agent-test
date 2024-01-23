@@ -24,6 +24,7 @@ jobs:
 
             - name: Create RC PR
               run: |
+                git fetch
                 export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
                 inv -e release.create-rc
 
