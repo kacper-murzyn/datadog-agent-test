@@ -10,9 +10,6 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v2
 
-            - name: Install pkg-config
-              run: sudo apt-get install pkg-config
-
             - name: Install python
               uses: actions/setup-python@v4
               with:
@@ -20,7 +17,10 @@ jobs:
                 cache: "pip"
 
             - name: Install Python dependencies
-              run: python3 -m pip install -r tasks/requirements_all_tasks.txt
+              run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
+                pip install -r tasks/libs/requirements-github.txt
 
             - name: Create RC PR
               run: inv -e release.create-rc
