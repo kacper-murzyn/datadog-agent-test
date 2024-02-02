@@ -2,6 +2,10 @@ name: Test Job
 
 on:
   workflow_dispatch:
+
+env:
+  DUMMY_VAR2: "dummy2"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 jobs:
     create_rc_pr:
         runs-on: ubuntu-latest
@@ -14,7 +18,6 @@ jobs:
 
             - name: Export envs
               run: |
-                export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
                 export DUMMY_VAR="dummy"
                 echo $DUMMY_VAR
             
@@ -22,5 +25,6 @@ jobs:
               run: |
                 echo $GITHUB_TOKEN
                 echo $DUMMY_VAR
+                echo $DUMMY_VAR2
               
 
