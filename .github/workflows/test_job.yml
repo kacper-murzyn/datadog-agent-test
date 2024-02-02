@@ -16,6 +16,7 @@ jobs:
               run: |
                 export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
                 export DUMMY_VAR="dummy"
+                echo $DUMMY_VAR
             
             - name: Test exported vars
               run: |
