@@ -26,6 +26,7 @@ jobs:
 
             - name: Determine the release active branch
               run: |
+                export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
                 export RELEASE_BRANCH=$(inv -e release.get-active-release-branch)
                 echo "RELEASE_BRANCH=${RELEASE_BRANCH}" >> $GITHUB_ENV
             
@@ -38,7 +39,6 @@ jobs:
             - name: Create RC PR
               run: |
                 git fetch
-                export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
                 inv -e release.create-rc
 
             - name: Notify Slack
