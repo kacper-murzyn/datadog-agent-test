@@ -1,0 +1,25 @@
+name: Test Job
+
+on:
+  workflow_dispatch:
+jobs:
+    create_rc_pr:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+              with:
+                fetch-depth: 0
+
+            - name: Export envs
+              run: |
+                export GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+                export DUMMY_VAR="dummy"
+            
+            - name: Test exported vars
+              run: |
+                echo $GITHUB_TOKEN
+                echo $DUMMY_VAR
+              
+
