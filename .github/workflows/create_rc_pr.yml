@@ -7,14 +7,9 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - name: Determine the release active branch
-              run: |
-                export RELEASE_BRANCH=$(inv -e release.get_active_release_branch)
-                echo "RELEASE_BRANCH=${RELEASE_BRANCH}" >> $GITHUB_ENV
             - name: Checkout repository
               uses: actions/checkout@v4
               with:
-                ref: ${{ env.RELEASE_BRANCH }}
                 fetch-depth: 0
 
             - name: Install python
@@ -29,6 +24,17 @@ jobs:
                 pip install -r requirements.txt
                 pip install -r tasks/libs/requirements-github.txt
 
+            - name: Determine the release active branch
+              run: |
+                export RELEASE_BRANCH=$(inv -e release.get_active_release_branch)
+                echo "RELEASE_BRANCH=${RELEASE_BRANCH}" >> $GITHUB_ENV
+            
+            - name: Checkout release branch
+              uses: actions/checkout@v4
+              with:
+                ref: ${{ env.RELEASE_BRANCH }}
+                fetch-depth: 0
+              
             - name: Create RC PR
               run: |
                 git fetch
