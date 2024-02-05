@@ -1542,7 +1542,7 @@ def get_active_release_branch(ctx):
     If release started and code freeze is in place - main branch is considered active.
     If release started and code freeze is over - release branch is considered active.
     """
-    gh = GithubAPI('datadog/datadog-agent')
+    gh = GithubAPI('kacper-murzyn/datadog-agent-test')
     latest_release = gh.latest_release()
     version = _create_version_from_match(VERSION_RE.search(latest_release))
     next_version = version.next_version(bump_minor=True)
