@@ -1072,10 +1072,11 @@ Make sure that milestone is open before trying again.""",
 
     # Step 1: Update release entries
 
-    print(color_message("Updating release entries", "bold"))
-    for major_version in list_major_versions:
-        new_version = next_rc_version(ctx, major_version, patch_version)
-        update_release_json(new_version, new_final_version)
+    # Mocked for action testing
+    # print(color_message("Updating release entries", "bold"))
+    # for major_version in list_major_versions:
+    #     new_version = next_rc_version(ctx, major_version, patch_version)
+    #     update_release_json(new_version, new_final_version)
 
     # Step 2: Update internal module dependencies
 
