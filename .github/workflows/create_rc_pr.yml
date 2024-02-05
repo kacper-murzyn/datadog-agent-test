@@ -34,16 +34,11 @@ jobs:
               with:
                 ref: ${{ env.RELEASE_BRANCH }}
                 fetch-depth: 0
+            
+            - name: Set git user
+              uses: fregante/setup-git-user@v2
               
             - name: Create RC PR
               run: |
                 git fetch
                 inv -e release.create-rc
-
-            - name: Notify Slack
-              uses: rtCamp/action-slack-notify@v2
-              with:
-                status: 'success'
-                text: 'New RC PR created!'
-                channel: '#trello-test-channel'
-                icon_emoji: ':rocket:'
