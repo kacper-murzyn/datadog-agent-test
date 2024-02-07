@@ -26,6 +26,6 @@ jobs:
                 echo $GITHUB_TOKEN
                 echo $DUMMY_VAR
                 echo $DUMMY_VAR2
-# Something for the commit
+# Something for the commit 2
               
 
