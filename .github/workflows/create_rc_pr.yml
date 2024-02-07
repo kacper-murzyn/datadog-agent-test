@@ -36,11 +36,20 @@ jobs:
               with:
                 ref: ${{ env.RELEASE_BRANCH }}
                 fetch-depth: 0
-            
-            - name: Set git user
-              uses: fregante/setup-git-user@v2
+
+            - name: Check for changes since last RC
+              run: |
+                last_rc_commit=$(git rev-list --all -i --grep="${env.RELEASE_BRANCH:0:5}0-rc" --max-count=1)
+                git rev-list --count HEAD ^"$last_rc_commit"
+                if [ $? -eq 0 ]; then
+                  echo "No changes since last RC. Quitting workflow."
+                  exit 1
+                fi
               
             - name: Create RC PR
+              if: ${{ success() }}
               run: |
+                git config user.name "GitHub Actions"
+                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                 git fetch
                 inv -e release.create-rc
