@@ -41,12 +41,15 @@ jobs:
               id: check_for_changes
               run: |
                 branch_substring=$(echo "${{ env.RELEASE_BRANCH }}" | cut -c 1-5)
+                echo "Branch substring: $branch_substring"
                 rc_pattern=$(echo "$branch_substring""0-rc")
                 last_rc_commit=$(git rev-list --all -i --grep="$rc_pattern" --max-count=1)
                 count=$(git rev-list --count HEAD ^"$last_rc_commit")
                 if [ $count -eq '0' ]; then
                     echo "No changes since last RC. Quitting workflow."
                     exit 0
+                else
+                    echo "$count new commits found since last RC. Proceeding with the workflow."
                 fi
                 
             - name: Create RC PR
