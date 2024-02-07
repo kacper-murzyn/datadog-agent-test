@@ -44,7 +44,7 @@ jobs:
                 git rev-list --count HEAD ^"$last_rc_commit"
                 if [ $? -eq 0 ]; then
                   echo "No changes since last RC. Quitting workflow."
-                  exit 1
+                  exit 0
                 fi
               
             - name: Create RC PR
