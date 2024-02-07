@@ -38,6 +38,7 @@ jobs:
                 fetch-depth: 0
 
             - name: Check for changes since last RC
+              id: check_for_changes
               run: |
                 rc_pattern=$(echo "${{ env.RELEASE_BRANCH }}" | cut -c 1-5)
                 last_rc_commit=$(git rev-list --all -i --grep="$rc_pattern" --max-count=1)
@@ -46,9 +47,9 @@ jobs:
                   echo "No changes since last RC. Quitting workflow."
                   exit 0
                 fi
-              
+                
             - name: Create RC PR
-              if: ${{ success() }}
+              if: ${{ steps.check_for_changes.outputs.exit != '0'}}
               run: |
                 git config user.name "GitHub Actions"
                 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
