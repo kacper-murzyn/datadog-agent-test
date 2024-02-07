@@ -39,7 +39,8 @@ jobs:
 
             - name: Check for changes since last RC
               run: |
-                last_rc_commit=$(git rev-list --all -i --grep="${env.RELEASE_BRANCH:0:5}0-rc" --max-count=1)
+                rc_pattern=$(echo "${{ env.RELEASE_BRANCH }}" | cut -c 1-5)
+                last_rc_commit=$(git rev-list --all -i --grep="$rc_pattern" --max-count=1)
                 git rev-list --count HEAD ^"$last_rc_commit"
                 if [ $? -eq 0 ]; then
                   echo "No changes since last RC. Quitting workflow."
