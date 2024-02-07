@@ -20,7 +20,7 @@ jobs:
               run: |
                 export DUMMY_VAR="dummy"
                 echo $DUMMY_VAR
-            
+            # commennt
             - name: Test exported vars
               run: |
                 echo $GITHUB_TOKEN
