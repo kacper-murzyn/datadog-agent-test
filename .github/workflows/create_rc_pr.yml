@@ -48,7 +48,7 @@ jobs:
                     echo "No changes since last RC. Quitting workflow."
                 else
                     echo "$count new commits found since last RC. Proceeding with the workflow."
-                    echo "RC-PR-CREATED=true" >> $GITHUB_OUTPUT
+                    echo "RC-PR-CREATED=true" >> $GITHUB_ENV
                 fi
                 
             - name: Create RC PR
@@ -61,7 +61,7 @@ jobs:
 
     build_test_rc:
         needs: create_rc_pr
-        if: ${{ needs.create_rc_pr.outputs.RC-PR-CREATED == 'true' }}
+        if: needs.create_rc_pr.outputs.RC-PR-CREATED == 'true'
         runs-on: ubuntu-latest
           
         steps:
