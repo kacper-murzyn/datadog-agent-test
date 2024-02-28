@@ -1,14 +1,15 @@
 name: Build test RC
 
 on:
-    pull_request_review:
-      types:
-        - submitted
+  pull_request_review:
+    types: [submitted]
+ 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
     build_test_rc:
+        if: github.event.review.state == 'approved' && startsWith(github.head_ref, 'release/')
         runs-on: ubuntu-latest
 
         steps:
