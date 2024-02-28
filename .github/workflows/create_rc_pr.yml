@@ -68,7 +68,7 @@ jobs:
         steps:
             - name: Test output
               run: |
-                echo "RC-PR-CREATED=${{ needs.create_rc_pr.outputs.RC-PR-CREATED }}"
+                echo "RC-PR-CREATED=${{ needs.create_rc_pr.outputs.rc_pr_created }}"
 
             # - name: Checkout repository
             #   uses: actions/checkout@v2
