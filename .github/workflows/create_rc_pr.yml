@@ -8,6 +8,8 @@ env:
 jobs:
     create_rc_pr:
         runs-on: ubuntu-latest
+        outputs:
+          rc_pr_created: ${{ steps.check_for_changes.outputs.rc_pr_created }}
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
@@ -47,7 +49,7 @@ jobs:
                     echo "No changes since last RC. Quitting workflow."
                 else
                     echo "$count new commits found since last RC. Proceeding with the workflow."
-                    echo "RC-PR-CREATED=true" >> $GITHUB_OUTPUT
+                    echo "rc_pr_created=true" >> $GITHUB_OUTPUT
                 fi
                 
             - name: Create RC PR
@@ -57,9 +59,6 @@ jobs:
                 git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
                 git fetch
                 inv -e release.create-rc
-        outputs:
-            id: rc_pr_created
-            value: ${{ steps.check_for_changes.outputs.RC-PR-CREATED }}
 
     build_test_rc:
         needs: create_rc_pr
