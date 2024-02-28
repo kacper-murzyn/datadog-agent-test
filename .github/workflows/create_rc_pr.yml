@@ -48,7 +48,7 @@ jobs:
                     echo "No changes since last RC. Quitting workflow."
                 else
                     echo "$count new commits found since last RC. Proceeding with the workflow."
-                    echo "RC-PR-CREATED=true" >> $GITHUB_ENV
+                    echo "RC-PR-CREATED=true" >> $GITHUB_OUTPUT
                 fi
                 
             - name: Create RC PR
@@ -61,28 +61,31 @@ jobs:
 
     build_test_rc:
         needs: create_rc_pr
-        if: needs.create_rc_pr.outputs.RC-PR-CREATED == 'true'
         runs-on: ubuntu-latest
           
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v2
-          
-            - name: Install python
-              uses: actions/setup-python@v4
-              with:
-                 python-version: 3.11
-                 cache: "pip"
-          
-            - name: Install Python dependencies
+            - name: Test output
               run: |
-                python -m pip install --upgrade pip
-                pip install -r requirements.txt
-                pip install -r tasks/libs/requirements-github.txt
+                echo "RC-PR-CREATED=${{ needs.create_rc_pr.outputs.RC-PR-CREATED }}"
+
+            # - name: Checkout repository
+            #   uses: actions/checkout@v2
+          
+            # - name: Install python
+            #   uses: actions/setup-python@v4
+            #   with:
+            #      python-version: 3.11
+            #      cache: "pip"
+          
+            # - name: Install Python dependencies
+            #   run: |
+            #     python -m pip install --upgrade pip
+            #     pip install -r requirements.txt
+            #     pip install -r tasks/libs/requirements-github.txt
                             
-            - name: Build RC
-              run: |
-                git config user.name "github-actions[bot]"
-                git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-                git fetch
-                inv -e release.build-rc --test-build
+            # - name: Build RC
+            #   run: |
+            #     git config user.name "github-actions[bot]"
+            #     git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            #     git fetch
+            #     inv -e release.build-rc --test-build
