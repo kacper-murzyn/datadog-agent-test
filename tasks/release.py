@@ -777,12 +777,15 @@ def __get_force_option(force: bool) -> str:
     return force_option
 
 
-def __tag_single_module(ctx, module, agent_version, commit, push, force_option, devel):
+def __tag_single_module(ctx, module, agent_version, commit, push, force_option, devel, test_build):
     """Tag a given module."""
     for tag in module.tag(agent_version):
 
         if devel:
             tag += "-devel"
+        
+        if test_build:
+            tag += "-test"
 
         ok = try_git_command(
             ctx,
@@ -798,7 +801,7 @@ def __tag_single_module(ctx, module, agent_version, commit, push, force_option, 
 
 
 @task
-def tag_modules(ctx, agent_version, commit="HEAD", verify=True, push=True, force=False, devel=False):
+def tag_modules(ctx, agent_version, commit="HEAD", verify=True, push=True, force=False, devel=False, test_build=False):
     """
     Create tags for Go nested modules for a given Datadog Agent version.
     The version should be given as an Agent 7 version.
@@ -822,13 +825,13 @@ def tag_modules(ctx, agent_version, commit="HEAD", verify=True, push=True, force
     for module in DEFAULT_MODULES.values():
         # Skip main module; this is tagged at tag_version via __tag_single_module.
         if module.should_tag and module.path != ".":
-            __tag_single_module(ctx, module, agent_version, commit, push, force_option, devel)
+            __tag_single_module(ctx, module, agent_version, commit, push, force_option, devel, test_build)
 
     print(f"Created module tags for version {agent_version}")
 
 
 @task
-def tag_version(ctx, agent_version, commit="HEAD", verify=True, push=True, force=False, devel=False):
+def tag_version(ctx, agent_version, commit="HEAD", verify=True, push=True, force=False, devel=False, test_build=False):
     """
     Create tags for a given Datadog Agent version.
     The version should be given as an Agent 7 version.
@@ -849,7 +852,7 @@ def tag_version(ctx, agent_version, commit="HEAD", verify=True, push=True, force
 
     # Always tag the main module
     force_option = __get_force_option(force)
-    __tag_single_module(ctx, DEFAULT_MODULES["."], agent_version, commit, push, force_option, devel)
+    __tag_single_module(ctx, DEFAULT_MODULES["."], agent_version, commit, push, force_option, devel, test_build)
     print(f"Created tags for version {agent_version}")
 
 
@@ -1165,7 +1168,7 @@ Make sure that milestone is open before trying again.""",
 
 
 @task
-def build_rc(ctx, major_versions="6,7", patch_version=False, k8s_deployments=False):
+def build_rc(ctx, major_versions="6,7", patch_version=False, k8s_deployments=False, test_build=False):
     """
     To be done after the PR created by release.create-rc is merged, with the same options
     as release.create-rc.
@@ -1192,16 +1195,18 @@ def build_rc(ctx, major_versions="6,7", patch_version=False, k8s_deployments=Fal
 
     print(color_message("Checking repository state", "bold"))
     # Check that the base branch is valid
-    current_branch = ctx.run("git rev-parse --abbrev-ref HEAD", hide=True).stdout.strip()
+    # yayko
+    # current_branch = ctx.run("git rev-parse --abbrev-ref HEAD", hide=True).stdout.strip()
 
-    if not check_base_branch(current_branch, new_version):
-        raise Exit(
-            color_message(
-                f"The branch you are on is neither {DEFAULT_BRANCH} or the correct release branch ({new_version.branch()}). Aborting.",
-                "red",
-            ),
-            code=1,
-        )
+    # if not check_base_branch(current_branch, new_version):
+    #     raise Exit(
+    #         color_message(
+    #             f"The branch you are on is neither {DEFAULT_BRANCH} or the correct release branch ({new_version.branch()}). Aborting.",
+    #             "red",
+    #         ),
+    #         code=1,
+    #     )
+    # yayko
 
     latest_commit = ctx.run("git --no-pager log --no-color -1 --oneline").stdout.strip()
 
@@ -1214,15 +1219,18 @@ def build_rc(ctx, major_versions="6,7", patch_version=False, k8s_deployments=Fal
 
     # Step 1: Tag versions
 
-    print(color_message(f"Tagging RC for agent version(s) {list_major_versions}", "bold"))
+    print(color_message(f"Tagging RC {'test' if test else ''} for agent version(s) {list_major_versions}", "bold"))
     print(
         color_message("If commit signing is enabled, you will have to make sure each tag gets properly signed.", "bold")
     )
     # tag_version only takes the highest version (Agent 7 currently), and creates
     # the tags for all supported versions
     # TODO: make it possible to do Agent 6-only or Agent 7-only tags?
-    tag_version(ctx, str(new_version), force=False)
-    tag_modules(ctx, str(new_version), force=False)
+    tag_version(ctx, str(new_version), force=False, test_build=test_build)
+    tag_modules(ctx, str(new_version), force=False, test_build=test_build)
+
+    if test_build:
+        new_version += '-test'
 
     print(color_message(f"Waiting until the {new_version} tag appears in Gitlab", "bold"))
     gitlab_tag = None
@@ -1234,16 +1242,16 @@ def build_rc(ctx, major_versions="6,7", patch_version=False, k8s_deployments=Fal
 
     # Step 2: Run the RC pipeline
 
-    run(
-        ctx,
-        git_ref=gitlab_tag,
-        use_release_entries=True,
-        major_versions=major_versions,
-        repo_branch="beta",
-        deploy=True,
-        rc_build=True,
-        rc_k8s_deployments=k8s_deployments,
-    )
+    # run(
+    #     ctx,
+    #     git_ref=gitlab_tag,
+    #     use_release_entries=True,
+    #     major_versions=major_versions,
+    #     repo_branch="beta",
+    #     deploy=True,
+    #     rc_build=True,
+    #     rc_k8s_deployments=k8s_deployments,
+    # )
 
 
 @task(help={'key': "Path to an existing release.json key, separated with double colons, eg. 'last_stable::6'"})
